@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.myapplication.name }}
+  namespace: {{ .Values.myapplication.namespace }}
+  labels:
+    {{- include "myapplication.labels" . | nindent 4 }}
+    {{- toYaml .Values.labels | nindent 4 }}
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- toYaml .Values.labels | nindent 6 }}
+  replicas: {{ .Values.myapplication.replicas }}
+  template: 
+    metadata:
+      labels:
+        {{- include "myapplication.labels" . | nindent 8 }}
+        {{- toYaml .Values.labels | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Values.deployment.name }}
+        image: {{ .Values.deployment.image }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        ports:
+        - containerPort:  {{ .Values.deployment.port }}
+        volumeMounts:
+          - name: mnt
+            mountPath: {{ .Values.config.mountpath }}
+            subPath: {{ .Values.config.subpath }}
+      volumes:
+      - name: mnt
+        configMap:
+          name: {{ .Values.config.name }}

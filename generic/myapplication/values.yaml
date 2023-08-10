@@ -1,0 +1,32 @@
+myapplication:
+  name: app
+  namespace: default
+  replicas: 1
+
+config: {}
+ 
+labels: {}
+
+deployment:
+  name: test
+  image: nginx
+  port: 80
+
+service:
+  name: test
+  servicetype: ClusterIP
+  serviceprotocal: TCP
+  serviceport: 80
+  targetport: 80
+
+resources: {}
+
+ingress:
+  enable: false
+  name: simple-ingress
+  host: "test.com"
+  path: /
+  pathType: Prefix
+
+annonations: {}
+

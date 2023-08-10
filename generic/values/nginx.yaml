@@ -1,0 +1,64 @@
+myapplication:
+  name: nginxapplication
+  namespace: default
+  replicas: 1
+
+config:
+  name: nginx.conf
+  data:
+    file-from-cfgmap: |
+      <!DOCTYPE html>
+        <html>
+        <head>
+        <title>Welcome to Custom Nginx Application !</title>
+        <style>
+            body {
+                width: 35em;
+                margin: 0 auto;
+                font-family: Tahoma, Verdana, Arial, sans-serif;
+            }
+        </style>
+        </head>
+        <body>
+        <h1>Hello From nginx!</h1>
+        <p>This is custom Web page of Nginx Running .</p>
+         <p><em>Thank you for using nginx.</em></p>
+        </body>
+        </html>
+  mountpath: /usr/share/nginx/html/index.html
+  subpath: file-from-cfgmap
+  
+labels:
+  app: nginx
+  env: dev
+
+deployment:
+  name: nginx
+  image: nginx
+  port: 80
+
+service:
+  name: nginxservice
+  servicetype: NodePort
+  serviceprotocal: TCP
+  serviceport: 80
+  targetport: 80
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "250m"
+  limits:
+    memory: "128Mi"
+    cpu: "500m"
+
+ingress:
+  enable: true
+  name: nginx-ingress
+  host: "hello-world.info"
+  path: /
+  pathType: Prefix
+
+
+annonations:
+  nginx.ingress.kubernetes.io/rewrite-target: /$1
